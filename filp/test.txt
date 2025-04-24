@@ -1,0 +1,6 @@
+Match "monkey" 5 "bigmonkey" 15
+Match "bigmonkey" 19 "kingmonkey" 18
+Match "hugemonkey" 18 "kingmonkey" 60
+Match "monkey" 19 "kingmonkey" 18
+Match "bigmonkey" 40 "hugemonkey" 0
+Match "monkey" 20 "hugemonkey" 20
