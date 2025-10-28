@@ -16,14 +16,17 @@ class HistoryPage extends StatelessWidget {
         builder: (context, state) {
           if (state is HistoryCubitStateHistoryPage) {
             return SingleChildScrollView(child: Column(
-              children: <Widget>[for (var item in state.resultList) Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("a: ${item[0]}"),
-                  Text("b: ${item[1]}"),
-                  Text("result: ${item[2]}"),
-                ]
-              )],
+              children: <Widget>[
+                for (var item in state.resultList)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("a: ${item[0]}"),
+                      Text("b: ${item[1]}"),
+                      Text("result: ${item[2]}"),
+                    ]
+                  )
+              ],
             ));
           }
           return Container();
