@@ -123,13 +123,7 @@ class _ListPageState extends State<ListPage> {
       body: BlocBuilder<ListCubit, ListCubitState>(
           builder: (context, state) {
             if (state.countryList.isEmpty) {
-              context.read<ListCubit>().updateSearch();
-            }
-            for (var country in state.countryList) {
-              print('I like ${country.countryName}');
-            }
-            for (var personFull in state.personFullList) {
-              print('I like ${personFull.personAssetImagePath}');
+              context.read<ListCubit>().updateSearch(PersonFilter());
             }
             return SingleChildScrollView(child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
