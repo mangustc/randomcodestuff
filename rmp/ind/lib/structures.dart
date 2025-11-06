@@ -34,6 +34,13 @@ class Country {
     required this.countryID,
     required this.countryName,
   });
+
+  factory Country.fromMap(Map<String, dynamic> map) {
+    return Country(
+      countryID: map['countryID'],
+      countryName: map['countryName'] ?? '',
+    );
+  }
 }
 
 class PersonFull {
