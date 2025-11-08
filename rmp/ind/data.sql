@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS Country;
 DROP TABLE IF EXISTS Person;
+DROP TABLE IF EXISTS Country;
 
 CREATE TABLE Person (
   personID INTEGER PRIMARY KEY,
@@ -32,6 +32,24 @@ INSERT INTO Person (
   personWantedByCountryID, personBirthDate, personAssetImagePath, personPhysicalCharacteristics,
   personDetails, personCharges
 ) VALUES
+  ('Doe', 'John', 1, 1, 1, '1980-01-15T00:00:00', 'assets/images/dexter.jpg', 'Height: 180cm, Hair: Brown', 'No additional details', 'Robbery'),
+  ('Smith', 'Jane', 2, 2, 2, '1990-05-30T00:00:00', 'assets/images/dexter.jpg', 'Height: 165cm, Hair: Blonde', 'Known to carry a weapon', 'Fraud'),
+  ('Doe', 'John', 1, 1, 1, '1980-01-15T00:00:00', 'assets/images/dexter.jpg', 'Height: 180cm, Hair: Brown', 'No additional details', 'Robbery'),
+  ('Smith', 'Jane', 2, 2, 2, '1990-05-30T00:00:00', 'assets/images/dexter.jpg', 'Height: 165cm, Hair: Blonde', 'Known to carry a weapon', 'Fraud'),
+  ('Doe', 'John', 1, 1, 1, '1980-01-15T00:00:00', 'assets/images/dexter.jpg', 'Height: 180cm, Hair: Brown', 'No additional details', 'Robbery'),
+  ('Smith', 'Jane', 2, 2, 2, '1990-05-30T00:00:00', 'assets/images/dexter.jpg', 'Height: 165cm, Hair: Blonde', 'Known to carry a weapon', 'Fraud'),
+  ('Doe', 'John', 1, 1, 1, '1980-01-15T00:00:00', 'assets/images/dexter.jpg', 'Height: 180cm, Hair: Brown', 'No additional details', 'Robbery'),
+  ('Smith', 'Jane', 2, 2, 2, '1990-05-30T00:00:00', 'assets/images/dexter.jpg', 'Height: 165cm, Hair: Blonde', 'Known to carry a weapon', 'Fraud'),
+  ('Doe', 'John', 1, 1, 1, '1980-01-15T00:00:00', 'assets/images/dexter.jpg', 'Height: 180cm, Hair: Brown', 'No additional details', 'Robbery'),
+  ('Smith', 'Jane', 2, 2, 2, '1990-05-30T00:00:00', 'assets/images/dexter.jpg', 'Height: 165cm, Hair: Blonde', 'Known to carry a weapon', 'Fraud'),
+  ('Doe', 'John', 1, 1, 1, '1980-01-15T00:00:00', 'assets/images/dexter.jpg', 'Height: 180cm, Hair: Brown', 'No additional details', 'Robbery'),
+  ('Smith', 'Jane', 2, 2, 2, '1990-05-30T00:00:00', 'assets/images/dexter.jpg', 'Height: 165cm, Hair: Blonde', 'Known to carry a weapon', 'Fraud'),
+  ('Doe', 'John', 1, 1, 1, '1980-01-15T00:00:00', 'assets/images/dexter.jpg', 'Height: 180cm, Hair: Brown', 'No additional details', 'Robbery'),
+  ('Smith', 'Jane', 2, 2, 2, '1990-05-30T00:00:00', 'assets/images/dexter.jpg', 'Height: 165cm, Hair: Blonde', 'Known to carry a weapon', 'Fraud'),
+  ('Doe', 'John', 1, 1, 1, '1980-01-15T00:00:00', 'assets/images/dexter.jpg', 'Height: 180cm, Hair: Brown', 'No additional details', 'Robbery'),
+  ('Smith', 'Jane', 2, 2, 2, '1990-05-30T00:00:00', 'assets/images/dexter.jpg', 'Height: 165cm, Hair: Blonde', 'Known to carry a weapon', 'Fraud'),
+  ('Doe', 'John', 1, 1, 1, '1980-01-15T00:00:00', 'assets/images/dexter.jpg', 'Height: 180cm, Hair: Brown', 'No additional details', 'Robbery'),
+  ('Smith', 'Jane', 2, 2, 2, '1990-05-30T00:00:00', 'assets/images/dexter.jpg', 'Height: 165cm, Hair: Blonde', 'Known to carry a weapon', 'Fraud'),
   ('Doe', 'John', 1, 1, 1, '1980-01-15T00:00:00', 'assets/images/dexter.jpg', 'Height: 180cm, Hair: Brown', 'No additional details', 'Robbery'),
   ('Smith', 'Jane', 2, 2, 2, '1990-05-30T00:00:00', 'assets/images/dexter.jpg', 'Height: 165cm, Hair: Blonde', 'Known to carry a weapon', 'Fraud'),
   ('Dubois', 'Claire', 2, 3, 3, '1975-09-12T00:00:00', 'assets/images/dexter.jpg', 'Height: 170cm, Eye Color: Green', '', 'Smuggling');

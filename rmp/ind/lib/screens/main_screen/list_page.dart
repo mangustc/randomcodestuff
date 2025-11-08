@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show FilteringTextInputFormatter;
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ind/screens/main_screen/list_cubit.dart';
 import 'package:ind/structures.dart';
@@ -190,28 +191,56 @@ class PersonConcise extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(
-              builder: (context) => PersonPage(personFull: personFull,)
-          ));
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5),
+    return SizedBox(
+      width: 160,
+      height: 320,
+      child: ElevatedButton(
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(
+                builder: (context) => PersonPage(personFull: personFull,)
+            ));
+          },
+          style: ElevatedButton.styleFrom(
+            padding: EdgeInsets.zero,
+            minimumSize: Size(0, 0),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5),
+            ),
           ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Image.asset(personFull.personAssetImagePath, width: 120, height: 120,),
-            Text(personFull.personFamilyName),
-            Text(personFull.personForename),
-            Text("${calculateAge(personFull.personBirthDate)} years old"),
-            Text(personFull.personNationalityCountryName),
-          ],
-        )
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Image.asset(
+                personFull.personAssetImagePath,
+                height: 150,
+                fit: BoxFit.cover,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "${personFull.personFamilyName.toUpperCase()}\n",
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      "${personFull.personForename.toUpperCase()}\n",
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      "${calculateAge(personFull.personBirthDate)} years old",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      personFull.personNationalityCountryName,
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          )),
     );
   }
 }
@@ -391,13 +420,56 @@ class _ListPageState extends State<ListPage> {
                   ),
                 ),
                 SizedBox(height: 20,),
-                Wrap(
-                  alignment: WrapAlignment.spaceEvenly,
-                  spacing: 12,
-                  runSpacing: 12,
-                  children: [
-                    for (var personFull in state.personFullList) PersonConcise(personFull: personFull),
-                  ],
+                // MasonryGridView.builder(
+                //   shrinkWrap: true,
+                //   physics: NeverScrollableScrollPhysics(),
+                //   padding: const EdgeInsets.all(12),
+                //   mainAxisSpacing: 12,
+                //   crossAxisSpacing: 12,
+                //   gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                //     crossAxisCount: 2,
+                //   ),
+                //   itemCount: state.personFullList.length,
+                //   itemBuilder: (context, index) {
+                //     final personFull = state.personFullList[index];
+                //     return PersonConcise(personFull: personFull);
+                //   },
+                // ),
+                // Wrap(
+                //   alignment: WrapAlignment.spaceBetween,
+                //   spacing: 12,
+                //   runSpacing: 12,
+                //   children: [
+                //     for (var personFull in state.personFullList) PersonConcise(personFull: personFull),
+                //   ],
+                // ),
+                LayoutBuilder(
+                    builder: (context, constraints) {
+                      double itemWidth = 160;
+                      int columnAmount = (constraints.maxWidth / itemWidth).floor();
+                      int rowAmount = (state.personFullList.length / columnAmount).ceil();
+
+                      return ListView.separated(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        padding: const EdgeInsets.all(0),
+
+                        itemCount: rowAmount,
+                        itemBuilder: (_, index) {
+                          int startIndex = index * columnAmount;
+                          int endIndex = startIndex + columnAmount - 1;
+                          return Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                for (int i = startIndex; i <= endIndex && i < state.personFullList.length; i++) PersonConcise(personFull: state.personFullList[i])
+                              ]
+                          );
+                        },
+                        separatorBuilder: (_, _) {
+                          return SizedBox(height: 12,);
+                        },
+                      );
+                    },
                 ),
               ]
             ),
