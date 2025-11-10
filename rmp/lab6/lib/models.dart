@@ -16,7 +16,6 @@ class Character {
   bool? hogwartsStudent;
   bool? hogwartsStaff;
   String? actor;
-  List<Null>? alternateActors;
   bool? alive;
   String? image;
 
@@ -38,7 +37,6 @@ class Character {
         this.hogwartsStudent,
         this.hogwartsStaff,
         this.actor,
-        this.alternateActors,
         this.alive,
         this.image});
 
@@ -60,14 +58,12 @@ class Character {
     hogwartsStudent = json['hogwartsStudent'];
     hogwartsStaff = json['hogwartsStaff'];
     actor = json['actor'];
-    if (json['alternate_actors'] != null) {
-      alternateActors = <Null>[];
-      json['alternate_actors'].forEach((v) {
-        alternateActors!.add(new Null.fromJson(v));
-      });
-    }
     alive = json['alive'];
-    image = json['image'];
+    if (json['image'] == "") {
+      image = null;
+    } else {
+      image = json['image'];
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -91,10 +87,6 @@ class Character {
     data['hogwartsStudent'] = this.hogwartsStudent;
     data['hogwartsStaff'] = this.hogwartsStaff;
     data['actor'] = this.actor;
-    if (this.alternateActors != null) {
-      data['alternate_actors'] =
-          this.alternateActors!.map((v) => v.toJson()).toList();
-    }
     data['alive'] = this.alive;
     data['image'] = this.image;
     return data;
@@ -104,14 +96,20 @@ class Character {
 class Wand {
   String? wood;
   String? core;
-  int? length;
+  double? length;
 
   Wand({this.wood, this.core, this.length});
 
   Wand.fromJson(Map<String, dynamic> json) {
     wood = json['wood'];
     core = json['core'];
-    length = json['length'];
+    var lengthVal = json['length'];
+
+    if (lengthVal is int) {
+      length = lengthVal.toDouble();
+    } else {
+      length = lengthVal;
+    }
   }
 
   Map<String, dynamic> toJson() {
