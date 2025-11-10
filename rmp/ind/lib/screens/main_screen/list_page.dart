@@ -328,7 +328,7 @@ class _ListPageState extends State<ListPage> {
                 ),
                 DropdownButtonFormField<int>(
                   decoration: const InputDecoration(labelText: 'Nationality'),
-                  value: _selectedNationalityCountryID,
+                  initialValue: _selectedNationalityCountryID,
                   items: [
                     const DropdownMenuItem(value: null, child: Text('Any')),
                     ...countryList.map((country) => DropdownMenuItem(
@@ -342,7 +342,7 @@ class _ListPageState extends State<ListPage> {
                 ),
                 DropdownButtonFormField<int>(
                   decoration: const InputDecoration(labelText: 'Wanted By'),
-                  value: _selectedWantedByCountryID,
+                  initialValue: _selectedWantedByCountryID,
                   items: [
                     const DropdownMenuItem(value: null, child: Text('Any')),
                     ...countryList.map((country) => DropdownMenuItem(
