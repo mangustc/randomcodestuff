@@ -66,7 +66,7 @@ class PersonFull {
       personPhysicalCharacteristics: map['personPhysicalCharacteristics'] ?? '',
       personDetails: map['personDetails'] ?? '',
       personCharges: map['personCharges'] ?? '',
-      personAssetImagePath: map['personAssetImagePath'] ?? '',
+      personAssetImagePath: "assets/${map['personAssetImagePath']}" ?? '',
     );
   }
 }

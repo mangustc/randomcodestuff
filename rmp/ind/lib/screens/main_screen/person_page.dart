@@ -62,6 +62,7 @@ class PersonPage extends StatelessWidget {
                 children: [
                   Text(
                     "${personFull.personFamilyName}, ${personFull.personForename}".toUpperCase(),
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
@@ -94,7 +95,13 @@ class PersonPage extends StatelessWidget {
               padding: EdgeInsets.only(left: 12, right: 12),
               child: Column(
                 children: [
-                  Image.asset(personFull.personAssetImagePath,),
+                  SizedBox(
+                    width: double.infinity,
+                    child: Image.asset(
+                      personFull.personAssetImagePath,
+                      fit: BoxFit.fitWidth,
+                    ),
+                  ),
                   SizedBox(height: 20,),
                   InfoText(name: "Family name", value: personFull.personFamilyName),
                   InfoText(name: "Forename", value: personFull.personForename),
