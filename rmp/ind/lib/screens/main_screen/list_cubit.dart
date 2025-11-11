@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ind/db.dart';
 import 'package:ind/structures.dart';
 
+
 class ListCubitState {
   final List<PersonFull> personFullList;
   final List<Country> countryList;

@@ -79,7 +79,7 @@ class DBProvider {
       whereArgs.addAll(keywordArgs);
     }
 
-    String whereString = whereClauses.isNotEmpty ? "WHERE " + whereClauses.join(" AND ") : "";
+    String whereString = whereClauses.isNotEmpty ? "WHERE ${whereClauses.join(" AND ")}" : "";
 
     final List<Map<String, dynamic>> result = await db.rawQuery('''
 SELECT
@@ -99,12 +99,12 @@ JOIN Country c2 ON p.personWantedByCountryID = c2.countryID
 $whereString
 ''', whereArgs);
 
-    return result.map((map) => PersonFull.fromMap(map)).toList();
+    return result.map((map) => PersonFull.fromSQL(map)).toList();
   }
 
   Future<List<Country>> getCountryList() async {
     Database db = await this.database;
     final List<Map<String, dynamic>> result = await db.query('Country');
-    return result.map((map) => Country.fromMap(map)).toList();
+    return result.map((map) => Country.fromSQL(map)).toList();
   }
 }

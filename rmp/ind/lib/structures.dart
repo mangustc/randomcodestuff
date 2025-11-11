@@ -1,31 +1,3 @@
-class Person {
-  int personID;
-  String personFamilyName;
-  String personForename;
-  int personGender;
-  int personNationalityCountryID;
-  int personWantedByCountryID;
-  DateTime personBirthDate;
-  String personAssetImagePath;
-  String personPhysicalCharacteristics;
-  String personDetails;
-  String personCharges;
-
-  Person({
-    required this.personID,
-    required this.personFamilyName,
-    required this.personForename,
-    required this.personGender,
-    required this.personNationalityCountryID,
-    required this.personWantedByCountryID,
-    required this.personBirthDate,
-    required this.personPhysicalCharacteristics,
-    required this.personDetails,
-    required this.personCharges,
-    required this.personAssetImagePath,
-  });
-}
-
 class Country {
   int countryID;
   String countryName;
@@ -35,7 +7,7 @@ class Country {
     required this.countryName,
   });
 
-  factory Country.fromMap(Map<String, dynamic> map) {
+  factory Country.fromSQL(Map<String, dynamic> map) {
     return Country(
       countryID: map['countryID'],
       countryName: map['countryName'] ?? '',
@@ -68,8 +40,7 @@ class PersonFull {
     required this.personAssetImagePath,
   });
 
-  factory PersonFull.fromMap(Map<String, dynamic> map) {
-    // Map gender integer to string
+  factory PersonFull.fromSQL(Map<String, dynamic> map) {
     String genderName;
     switch (map["personGender"]) {
       case 0:
