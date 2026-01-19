@@ -30,7 +30,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
       MaterialPageRoute(builder: (context) => LoadedScreen(characterList: characterList),),
     ),).catchError((error) => Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: "error.toString()"),),
+      MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: error.toString()),),
     ),
     );
   }

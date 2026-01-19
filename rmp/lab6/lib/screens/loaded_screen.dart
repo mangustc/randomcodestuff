@@ -33,6 +33,17 @@ class CharacterInfo extends StatelessWidget {
             height: 80,
             fit: BoxFit.cover,
             errorBuilder: (_, _, _) { return failedLoadPhoto; },
+            loadingBuilder: (context, child, imageEvent) {
+              if (imageEvent != null) {
+                return Center(
+                  child: CircularProgressIndicator(
+                    value: imageEvent.expectedTotalBytes != null ? imageEvent.cumulativeBytesLoaded / imageEvent.expectedTotalBytes! : null,
+                  ),
+                );
+              } else {
+                return child;
+              }
+            },
           ) : failedLoadPhoto,
           SizedBox(width: 16),
           // Textual information
@@ -72,7 +83,6 @@ class LoadedScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.red,
         title: Text("Harry Potter Characters"),
       ),
       body: ListView.builder(
