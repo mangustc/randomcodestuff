@@ -1,0 +1,23 @@
+services:
+  auth-proxy:
+    image: nginx:alpine
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - gateway-net
+      - auth-internal
+    depends_on:
+      - auth-api
+
+  auth-api:
+    build: .
+    environment:
+      - ROOT_PATH=/api/auth
+    networks:
+      - auth-internal
+
+networks:
+  gateway-net:
+    name: gateway-net
+  auth-internal:
+    internal: true

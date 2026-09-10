@@ -1,0 +1,23 @@
+services:
+  order-proxy:
+    image: nginx:alpine
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - gateway-net
+      - order-internal
+    depends_on:
+      - order-api
+
+  order-api:
+    build: .
+    environment:
+      - ROOT_PATH=/api/orders
+    networks:
+      - order-internal
+
+networks:
+  gateway-net:
+    name: gateway-net
+  order-internal:
+    internal: true
