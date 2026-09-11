@@ -1,9 +1,8 @@
-name: enterprise-system
+name: ma-mag
 
 networks:
   gateway-net:
     name: gateway-net
-    driver: bridge
 
 include:
   - ./services/auth-service/docker-compose.yml

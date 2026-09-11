@@ -5,7 +5,6 @@ ROOT_PATH = os.getenv("ROOT_PATH", "")
 
 app = FastAPI(
     title="Order Service",
-    version="1.0.0",
     root_path=ROOT_PATH
 )
 
