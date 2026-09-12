@@ -1,0 +1,17 @@
+services:
+  notification-worker:
+    build: .
+    environment:
+      - RABBITMQ_HOST=${RABBITMQ_HOST}
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+      - RABBITMQ_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_PASS=${RABBITMQ_DEFAULT_PASS}
+    networks:
+      - message-net
+    depends_on:
+      - rabbitmq
+    restart: unless-stopped
+
+networks:
+  message-net:
+    name: message-net

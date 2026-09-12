@@ -9,6 +9,7 @@ networks:
 include:
   - ./services/auth-service/docker-compose.yml
   - ./services/order-service/docker-compose.yml
+  - ./services/notification-service/docker-compose.yml
 
 services:
   api-gateway:
@@ -26,6 +27,7 @@ services:
   rabbitmq:
     image: rabbitmq:4-management-alpine
     ports:
+      - "5672:5672"
       - "15672:15672"
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}

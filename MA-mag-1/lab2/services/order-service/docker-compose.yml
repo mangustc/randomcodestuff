@@ -13,11 +13,18 @@ services:
     build: .
     environment:
       - ROOT_PATH=/api/orders
+      - RABBITMQ_HOST=${RABBITMQ_HOST}
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+      - RABBITMQ_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_PASS=${RABBITMQ_DEFAULT_PASS}
     networks:
       - order-internal
+      - message-net
 
 networks:
   gateway-net:
     name: gateway-net
   order-internal:
     internal: true
+  message-net:
+    name: message-net
