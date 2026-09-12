@@ -3,6 +3,8 @@ name: ma-mag
 networks:
   gateway-net:
     name: gateway-net
+  message-net:
+    name: message-net
 
 include:
   - ./services/auth-service/docker-compose.yml
@@ -20,3 +22,13 @@ services:
     depends_on:
       - auth-proxy
       - order-proxy
+
+  rabbitmq:
+    image: rabbitmq:4-management-alpine
+    ports:
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+    networks:
+      - message-net
