@@ -16,13 +16,12 @@ RABBITMQ_PASS = os.environ["RABBITMQ_PASS"]
 app = FastAPI(title="Order Service", root_path=ROOT_PATH)
 
 
-class Exchanges(StrEnum):
+class Exchange(StrEnum):
     ORDERS = "orders.exchange"
 
 
-class OrderRoutingKeys(StrEnum):
+class OrderRoutingKey(StrEnum):
     CREATED = "orders.order.created"
-    CANCELLED = "orders.order.cancelled"
 
 
 class OrderCreateRequest(BaseModel):
@@ -32,7 +31,7 @@ class OrderCreateRequest(BaseModel):
 
 class OrderCreatedMessage(BaseModel):
     event_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    event_type: str = OrderRoutingKeys.CREATED
+    event_type: str = OrderRoutingKey.CREATED
     occurred_at: str = Field(
         default_factory=lambda: datetime.now(timezone.utc).isoformat()
     )
@@ -42,7 +41,7 @@ class OrderCreatedMessage(BaseModel):
 
 
 def publish_event(
-    exchange: Exchanges, routing_key: OrderRoutingKeys, event: BaseModel
+    exchange: Exchange, routing_key: OrderRoutingKey, event: BaseModel
 ) -> None:
     credentials = pika.PlainCredentials(RABBITMQ_USER, RABBITMQ_PASS)
     parameters = pika.ConnectionParameters(
@@ -83,7 +82,7 @@ def get_orders():
     }
 
 
-@app.post("/orders", status_code=status.HTTP_201_CREATED)
+@app.post("/order", status_code=status.HTTP_201_CREATED)
 def create_order(payload: OrderCreateRequest):
     generated_order_id = f"ord_{uuid.uuid4().hex[:6]}"
 
@@ -93,7 +92,7 @@ def create_order(payload: OrderCreateRequest):
 
     try:
         publish_event(
-            exchange=Exchanges.ORDERS, routing_key=OrderRoutingKeys.CREATED, event=event
+            exchange=Exchange.ORDERS, routing_key=OrderRoutingKey.CREATED, event=event
         )
     except Exception as e:
         raise HTTPException(

@@ -17,16 +17,16 @@ RABBITMQ_USER = os.environ["RABBITMQ_USER"]
 RABBITMQ_PASS = os.environ["RABBITMQ_PASS"]
 
 
-class Exchanges(StrEnum):
+class Exchange(StrEnum):
     ORDERS = "orders.exchange"
 
 
-class RoutingKeys(StrEnum):
+class OrderRoutingKey(StrEnum):
     ORDER_ALL = "orders.order.*"
     ORDER_CREATED = "orders.order.created"
 
 
-class Queues(StrEnum):
+class Queue(StrEnum):
     ORDER_NOTIFICATIONS = "notification-service.orders.v1"
 
 
@@ -78,27 +78,27 @@ def start_consumer():
             channel = connection.channel()
 
             channel.exchange_declare(
-                exchange=Exchanges.ORDERS, exchange_type="topic", durable=True
+                exchange=Exchange.ORDERS, exchange_type="topic", durable=True
             )
 
-            channel.queue_declare(queue=Queues.ORDER_NOTIFICATIONS, durable=True)
+            channel.queue_declare(queue=Queue.ORDER_NOTIFICATIONS, durable=True)
 
             channel.queue_bind(
-                exchange=Exchanges.ORDERS,
-                queue=Queues.ORDER_NOTIFICATIONS,
-                routing_key=RoutingKeys.ORDER_ALL,
+                exchange=Exchange.ORDERS,
+                queue=Queue.ORDER_NOTIFICATIONS,
+                routing_key=OrderRoutingKey.ORDER_ALL,
             )
 
             channel.basic_qos(prefetch_count=1)
 
             channel.basic_consume(
-                queue=Queues.ORDER_NOTIFICATIONS, on_message_callback=process_message
+                queue=Queue.ORDER_NOTIFICATIONS, on_message_callback=process_message
             )
 
             logger.info(
-                f"Connected! Listening to exchange '{Exchanges.ORDERS}' "
-                f"via queue '{Queues.ORDER_NOTIFICATIONS}' "
-                f"(Binding: '{RoutingKeys.ORDER_ALL}')..."
+                f"Connected! Listening to exchange '{Exchange.ORDERS}' "
+                f"via queue '{Queue.ORDER_NOTIFICATIONS}' "
+                f"(Binding: '{OrderRoutingKey.ORDER_ALL}')..."
             )
             channel.start_consuming()
 
