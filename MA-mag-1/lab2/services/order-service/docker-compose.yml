@@ -8,10 +8,16 @@ services:
       - order-internal
     depends_on:
       - order-api
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://127.0.0.1:12201"
+        tag: "order-proxy"
 
   order-api:
     build: .
     environment:
+      - SERVICE_NAME=order-service
       - ROOT_PATH=/api/orders
       - RABBITMQ_HOST=${RABBITMQ_HOST}
       - RABBITMQ_PORT=${RABBITMQ_PORT}
@@ -20,6 +26,11 @@ services:
     networks:
       - order-internal
       - message-net
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://127.0.0.1:12201"
+        tag: "order-api"
 
 networks:
   gateway-net:

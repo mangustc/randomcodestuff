@@ -2,6 +2,7 @@ services:
   notification-worker:
     build: .
     environment:
+      - SERVICE_NAME=notification-service
       - RABBITMQ_HOST=${RABBITMQ_HOST}
       - RABBITMQ_PORT=${RABBITMQ_PORT}
       - RABBITMQ_USER=${RABBITMQ_DEFAULT_USER}
@@ -11,6 +12,11 @@ services:
     depends_on:
       - rabbitmq
     restart: unless-stopped
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://127.0.0.1:12201"
+        tag: "notification-worker"
 
 networks:
   message-net:
