@@ -5,13 +5,15 @@ import uuid
 from datetime import datetime, timezone
 from enum import StrEnum
 
+import jwt
 import pika
-from fastapi import FastAPI, HTTPException, Request, status
+from fastapi import Depends, FastAPI, HTTPException, Request, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel, Field
 from pythonjsonlogger import jsonlogger
 
 correlation_id_ctx = contextvars.ContextVar("correlation_id", default="")
-SERVICE_NAME = os.getenv("SERVICE_NAME", "order-service")
+SERVICE_NAME = os.environ["SERVICE_NAME"]
 
 
 class ECSJsonFormatter(jsonlogger.JsonFormatter):
@@ -30,13 +32,20 @@ logger.setLevel(logging.INFO)
 logger.addHandler(log_handler)
 logger.propagate = False
 
-ROOT_PATH = os.getenv("ROOT_PATH", "")
+ROOT_PATH = os.environ["ROOT_PATH"]
 RABBITMQ_HOST = os.environ["RABBITMQ_HOST"]
 RABBITMQ_PORT = int(os.environ["RABBITMQ_PORT"])
 RABBITMQ_USER = os.environ["RABBITMQ_USER"]
 RABBITMQ_PASS = os.environ["RABBITMQ_PASS"]
+JWT_SECRET = os.environ["JWT_SECRET"]
+JWT_ALGORITHM = os.environ["JWT_ALGORITHM"]
+JWT_ISSUER = os.environ["JWT_ISSUER"]
+JWT_AUDIENCE = os.environ["JWT_AUDIENCE"]
 
-app = FastAPI(title="Order Service", root_path=ROOT_PATH)
+app = FastAPI(
+    title="Order Service",
+    root_path=ROOT_PATH,
+)
 
 
 @app.middleware("http")
@@ -126,6 +135,68 @@ def get_orders():
 def order_error():
     logger.exception("Fetched all orders")
     exit(1)
+
+
+bearer_scheme = HTTPBearer(
+    auto_error=False, description="Access token from the auth service /token endpoint"
+)
+
+
+class TokenClaims(BaseModel):
+    sub: str
+    username: str
+    email: str
+    iss: str
+    aud: str | list[str]
+    iat: int
+    exp: int
+
+
+class AuthCheckResponse(BaseModel):
+    status: str
+    service: str
+    data: TokenClaims
+
+
+def decode_access_token(credentials: HTTPAuthorizationCredentials) -> dict:
+    try:
+        return jwt.decode(
+            credentials.credentials,
+            JWT_SECRET,
+            algorithms=[JWT_ALGORITHM],
+            issuer=JWT_ISSUER,
+            audience=JWT_AUDIENCE,
+        )
+    except jwt.ExpiredSignatureError:
+        logger.warning("Rejected expired access token")
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Access token has expired")
+    except jwt.InvalidTokenError:
+        logger.warning("Rejected invalid access token")
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid access token")
+
+
+@app.get(
+    "/auth-check",
+    response_model=AuthCheckResponse,
+    responses={401: {"description": "Missing, expired or invalid access token"}},
+    summary="Test endpoint that validates a JWT access token",
+)
+def check_auth(
+    credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
+):
+    if credentials is None:
+        logger.warning("Rejected auth check without a bearer token")
+        raise HTTPException(
+            status.HTTP_401_UNAUTHORIZED, "Missing bearer access token"
+        )
+
+    claims = decode_access_token(credentials)
+    logger.info(f"Accepted access token issued for {claims.get('username')}")
+    return {
+        "status": "success",
+        "service": "order-service",
+        "data": claims,
+    }
 
 
 @app.post("/order", status_code=status.HTTP_201_CREATED)

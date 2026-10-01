@@ -7,14 +7,15 @@ from datetime import datetime, timezone, timedelta
 
 import jwt
 import psycopg2
-from fastapi import FastAPI, Request, HTTPException, status
+from fastapi import Depends, FastAPI, Request, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel, Field
 from pythonjsonlogger import jsonlogger
 
 from src.db import init_db, get_connection
 
 correlation_id_ctx = contextvars.ContextVar("correlation_id", default="")
-SERVICE_NAME = os.getenv("SERVICE_NAME", "auth-service")
+SERVICE_NAME = os.environ["SERVICE_NAME"]
 
 
 class ECSJsonFormatter(jsonlogger.JsonFormatter):
@@ -46,7 +47,11 @@ async def lifespan(_: FastAPI):
     yield
 
 
-app = FastAPI(title="Auth Service", root_path=ROOT_PATH, lifespan=lifespan)
+app = FastAPI(
+    title="Auth Service",
+    root_path=ROOT_PATH,
+    lifespan=lifespan,
+)
 
 @app.middleware("http")
 async def trace_id_middleware(request: Request, call_next):
@@ -72,6 +77,69 @@ def get_auth():
         "service": "auth-service",
         "data": {"username": "HELP", "email": "helpme@gmail.com"},
     }
+
+
+bearer_scheme = HTTPBearer(
+    auto_error=False, description="Access token from the /token endpoint"
+)
+
+
+class TokenClaims(BaseModel):
+    sub: str
+    username: str
+    email: str
+    iss: str
+    aud: str | list[str]
+    iat: int
+    exp: int
+
+
+class AuthCheckResponse(BaseModel):
+    status: str
+    service: str
+    data: TokenClaims
+
+
+def decode_access_token(credentials: HTTPAuthorizationCredentials) -> dict:
+    try:
+        return jwt.decode(
+            credentials.credentials,
+            JWT_SECRET,
+            algorithms=[JWT_ALGORITHM],
+            issuer=JWT_ISSUER,
+            audience=JWT_AUDIENCE,
+        )
+    except jwt.ExpiredSignatureError:
+        logger.warning("Rejected expired access token")
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Access token has expired")
+    except jwt.InvalidTokenError:
+        logger.warning("Rejected invalid access token")
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid access token")
+
+
+@app.get(
+    "/auth-check",
+    response_model=AuthCheckResponse,
+    responses={401: {"description": "Missing, expired or invalid access token"}},
+    summary="Test endpoint that validates a JWT access token",
+)
+def check_auth(
+    credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
+):
+    if credentials is None:
+        logger.warning("Rejected auth check without a bearer token")
+        raise HTTPException(
+            status.HTTP_401_UNAUTHORIZED, "Missing bearer access token"
+        )
+
+    claims = decode_access_token(credentials)
+    logger.info(f"Accepted access token issued for {claims.get('username')}")
+    return {
+        "status": "success",
+        "service": "auth-service",
+        "data": claims,
+    }
+
 
 class UserRegisterRequest(BaseModel):
     username: str = Field(..., min_length=3, max_length=50)
