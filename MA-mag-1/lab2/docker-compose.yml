@@ -8,9 +8,9 @@ networks:
 
 include:
   - ./services/logging/docker-compose.yml
-  - ./services/auth-service/docker-compose.yml
-  - ./services/order-service/docker-compose.yml
-  - ./services/notification-service/docker-compose.yml
+  - ./services/auth/docker-compose.yml
+  - ./services/order/docker-compose.yml
+  - ./services/notification/docker-compose.yml
 
 services:
   api-gateway:
