@@ -8,11 +8,6 @@ services:
       - order-internal
     depends_on:
       - order-api
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://127.0.0.1:12201"
-        tag: "order-proxy"
 
   order-api:
     build: .
@@ -26,11 +21,6 @@ services:
     networks:
       - order-internal
       - message-net
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://127.0.0.1:12201"
-        tag: "order-api"
 
 networks:
   gateway-net:

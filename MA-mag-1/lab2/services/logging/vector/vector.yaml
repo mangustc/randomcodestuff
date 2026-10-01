@@ -1,0 +1,49 @@
+sources:
+  docker:
+    type: docker_logs
+
+transforms:
+  filter_and_enrich:
+    type: remap
+    inputs:
+      - docker
+    source: |
+      project = ""
+      if !is_null(.label."com.docker.compose.project") {
+        project = .label."com.docker.compose.project"
+      } else if !is_null(.label."com.docker.stack.namespace") {
+        project = .label."com.docker.stack.namespace"
+      }
+
+      if project != "ma-mag" {
+        abort
+      }
+
+      service = "unknown"
+      if !is_null(.label."com.docker.compose.service") {
+        service = .label."com.docker.compose.service"
+      } else if !is_null(.label."com.docker.swarm.service.name") {
+        service = .label."com.docker.swarm.service.name"
+      } else if !is_null(.container_name) {
+        service = .container_name
+      }
+
+      if service == "vector" || service == "logstash" || service == "elasticsearch" || service == "kibana" {
+        abort
+      }
+
+      .tag = service
+
+      del(.label)
+
+sinks:
+  logstash:
+    type: socket
+    inputs:
+      - filter_and_enrich
+    address: "logstash:50000"
+    mode: tcp
+    encoding:
+      codec: json
+    framing:
+      method: newline_delimited

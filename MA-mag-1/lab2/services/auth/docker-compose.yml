@@ -8,11 +8,6 @@ services:
       - auth-internal
     depends_on:
       - auth-api
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://127.0.0.1:12201"
-        tag: "auth-proxy"
 
   auth-api:
     build: .
@@ -21,11 +16,6 @@ services:
       - ROOT_PATH=/api/auth
     networks:
       - auth-internal
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://127.0.0.1:12201"
-        tag: "auth-api"
 
 networks:
   gateway-net:

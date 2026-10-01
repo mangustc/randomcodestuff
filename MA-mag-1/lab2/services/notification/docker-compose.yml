@@ -12,11 +12,6 @@ services:
     depends_on:
       - rabbitmq
     restart: unless-stopped
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://127.0.0.1:12201"
-        tag: "notification-worker"
 
 networks:
   message-net:

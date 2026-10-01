@@ -24,11 +24,6 @@ services:
     depends_on:
       - auth-proxy
       - order-proxy
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://127.0.0.1:12201"
-        tag: "api-gateway"
 
   rabbitmq:
     image: rabbitmq:4-management-alpine
@@ -39,8 +34,3 @@ services:
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
     networks:
       - message-net
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://127.0.0.1:12201"
-        tag: "rabbitmq"
