@@ -7,10 +7,13 @@ networks:
     name: message-net
   db-pgadmin-net:
     name: db-pgadmin-net
+  db-backup-net:
+    name: db-backup-net
 
 include:
   - ./services/logging/docker-compose.yml
   - ./services/auth/docker-compose.yml
+  - ./services/backup/docker-compose.yml
   - ./services/order/docker-compose.yml
   - ./services/notification/docker-compose.yml
 

@@ -1,0 +1,33 @@
+services:
+  backup:
+    image: postgres:18-alpine
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        while true; do
+          /usr/local/bin/backup.sh || echo "backup.sh failed, retrying in ${BACKUP_INTERVAL_SECONDS}s"
+          sleep ${BACKUP_INTERVAL_SECONDS}
+        done
+    volumes:
+      - ./backup.sh:/usr/local/bin/backup.sh:ro
+      - ./backups:/backups
+    environment:
+      - POSTGRES_HOST=auth-db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=${AUTH_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${AUTH_POSTGRES_PW}
+      - POSTGRES_DB=${AUTH_POSTGRES_DB}
+      - BACKUP_INTERVAL_SECONDS=${BACKUP_INTERVAL_SECONDS}
+      - BACKUP_DIR=/backups
+    networks:
+      - db-backup-net
+    depends_on:
+      auth-db:
+        condition: service_healthy
+    restart: unless-stopped
+
+networks:
+  auth-internal:
+  db-backup-net:
+    name: db-backup-net

@@ -42,6 +42,7 @@ services:
     networks:
       - auth-internal
       - db-pgadmin-net
+      - db-backup-net
     shm_size: 128mb
     restart: unless-stopped
     healthcheck:
@@ -60,6 +61,10 @@ networks:
     name: gateway-net
   auth-internal:
     internal: true
+  db-pgadmin-net:
+    name: db-pgadmin-net
+  db-backup-net:
+    name: db-backup-net
 
 volumes:
   auth_db_data:

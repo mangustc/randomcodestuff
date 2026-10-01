@@ -1,2 +1,4 @@
 .env
 .idea
+services/backup/backups/*
+!services/backup/backups/.gitkeep
