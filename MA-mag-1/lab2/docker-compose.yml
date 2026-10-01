@@ -5,6 +5,8 @@ networks:
     name: gateway-net
   message-net:
     name: message-net
+  db-pgadmin-net:
+    name: db-pgadmin-net
 
 include:
   - ./services/logging/docker-compose.yml
@@ -34,3 +36,23 @@ services:
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
     networks:
       - message-net
+
+  pgadmin:
+    image: dpage/pgadmin4:9.18
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_MAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PW}
+      - PGADMIN_CONFIG_SERVER_MODE=True
+    volumes:
+      - auth_pgadmin_data:/var/lib/pgadmin
+    networks:
+      - db-pgadmin-net
+    restart: unless-stopped
+    ports:
+      - "5050:80"
+    depends_on:
+      auth-db:
+        condition: service_healthy
+
+volumes:
+  auth_pgadmin_data:

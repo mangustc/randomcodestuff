@@ -14,11 +14,52 @@ services:
     environment:
       - SERVICE_NAME=auth-service
       - ROOT_PATH=/api/auth
+      - POSTGRES_HOST=auth-db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=${AUTH_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${AUTH_POSTGRES_PW}
+      - POSTGRES_DB=${AUTH_POSTGRES_DB}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_ALGORITHM=${JWT_ALGORITHM}
+      - JWT_ISSUER=${JWT_ISSUER}
+      - JWT_AUDIENCE=${JWT_AUDIENCE}
+      - JWT_EXPIRE_MINUTES=${JWT_EXPIRE_MINUTES}
+
     networks:
       - auth-internal
+    depends_on:
+      auth-db:
+        condition: service_healthy
+
+  auth-db:
+    image: postgres:18-alpine
+    volumes:
+      - auth_db_data:/var/lib/postgresql
+    environment:
+      - POSTGRES_USER=${AUTH_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${AUTH_POSTGRES_PW}
+      - POSTGRES_DB=${AUTH_POSTGRES_DB}
+    networks:
+      - auth-internal
+      - db-pgadmin-net
+    shm_size: 128mb
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'pg_isready -h 127.0.0.1 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
 networks:
   gateway-net:
     name: gateway-net
   auth-internal:
     internal: true
+
+volumes:
+  auth_db_data:
