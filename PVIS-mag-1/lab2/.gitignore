@@ -1,0 +1,7 @@
+videos/
+.venv/
+__pycache__/
+results/
+visualization/
+out/
+.idea
